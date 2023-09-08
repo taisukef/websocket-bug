@@ -9,6 +9,7 @@ socket.onopen = () => {
 };
 
 socket.onmessage = (e) => {
+    console.log("onmessage", e)
     const payload = JSON.parse(e.data);
     // 他のピアのIDの配列が返ってきた
     if (payload.type == "res") {
@@ -39,5 +40,5 @@ socket.onmessage = (e) => {
     // offerが送られてきた(answerの算出は省略)
     console.log("hello");
     // answerの代わりに"hello"を送信
-    socket.send("hello");
+   socket.send(JSON.stringify({ type: "hello", q: "hello-q" }))
 }

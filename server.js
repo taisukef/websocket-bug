@@ -1,16 +1,20 @@
 const cons = {};
 Deno.serve({
-    port: 443,
-    cert: await Deno.readTextFile("/etc/letsencrypt/live/wab.sabae.cc/fullchain.pem"),
-    key: await Deno.readTextFile("/etc/letsencrypt/live/wab.sabae.cc/privkey.pem")
+    //port: 443,
+    port: 7001,
+    hostname: "[::]",
+    //cert: await Deno.readTextFile("/etc/letsencrypt/live/wab.sabae.cc/fullchain.pem"),
+    //key: await Deno.readTextFile("/etc/letsencrypt/live/wab.sabae.cc/privkey.pem")
 }, async (req) => {
     const upgrade = req.headers.get("upgrade") || "";
     if (upgrade.toLowerCase() == "websocket") {
+        //console.log(req);
         const { socket, response } = Deno.upgradeWebSocket(req);
         socket.onmessage = async (e) => {
             // "hello"が出力されない
-            console.log(e.data.slice(0, 8));
+            //console.log(e.data.slice(0, 8));
             const payload = JSON.parse(e.data);
+            console.log(payload.q);
             switch (payload.q) {
                 // クライアントがIDを名乗った
                 case "did":
@@ -18,7 +22,7 @@ Deno.serve({
                     break;
                 // ピアのIDの一覧を要求された
                 case "neighbours":
-                    socket.send(JSON.stringify({ type: "res", body: Object.keys(cons) }));
+                    socket.send(JSON.stringify({ type: "resx", body: Object.keys(cons) }));
                     break;
                 // offer/answerの転送を要求された
                 case "transport":
